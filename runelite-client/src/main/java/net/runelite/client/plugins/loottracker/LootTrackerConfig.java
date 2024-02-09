@@ -35,6 +35,17 @@ public interface LootTrackerConfig extends Config
 {
 	String GROUP = "loottracker";
 
+
+	@ConfigItem(
+		keyName = "minimumPrice",
+		name = "Minimum Price",
+		description = "Configures which items should be automatically ignored based on price."
+	)
+	default int getMinimumPrice()
+	{
+		return 0;
+	}
+
 	@ConfigSection(
 		name = "Ignored Entries",
 		description = "The Ignore items and Ignore groups options",

@@ -550,12 +550,18 @@ public class LootTrackerPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
+		log.debug("MY Configuration has changed!" + event.toString());
 		if (event.getGroup().equals(LootTrackerConfig.GROUP))
 		{
-			if ("ignoredItems".equals(event.getKey()) || "ignoredEvents".equals(event.getKey()))
+			String eventKey = event.getKey();
+			if ("ignoredItems".equals(eventKey) || "ignoredEvents".equals(eventKey))
 			{
 				ignoredItems = Text.fromCSV(config.getIgnoredItems());
 				ignoredEvents = Text.fromCSV(config.getIgnoredEvents());
+				SwingUtilities.invokeLater(panel::updateIgnoredRecords);
+			}
+			else if ("minimumPrice".equals(eventKey) || "priceType".equals(eventKey))
+			{
 				SwingUtilities.invokeLater(panel::updateIgnoredRecords);
 			}
 		}
@@ -1423,9 +1429,16 @@ public class LootTrackerPlugin extends Plugin
 		// the config changed will update the panel
 	}
 
-	boolean isIgnored(String name)
+	boolean isIgnored(LootTrackerItem item)
 	{
-		return ignoredItems.contains(name);
+		boolean ignore = ignoredItems.contains(item.getName());
+		if (!ignore)
+		{
+			int itemPrice = config.priceType() == LootTrackerPriceType.HIGH_ALCHEMY ? item.getHaPrice() : item.getGePrice();
+			int ignoredPrice = config.getMinimumPrice();
+			ignore = itemPrice < ignoredPrice;
+		}
+		return ignore;
 	}
 
 	void toggleEvent(String name, boolean ignore)

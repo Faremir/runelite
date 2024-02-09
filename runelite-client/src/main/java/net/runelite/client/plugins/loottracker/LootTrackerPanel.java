@@ -469,7 +469,7 @@ class LootTrackerPanel extends PluginPanel
 		{
 			for (LootTrackerItem item : record.getItems())
 			{
-				item.setIgnored(plugin.isIgnored(item.getName()));
+				item.setIgnored(plugin.isIgnored(item));
 			}
 		}
 
